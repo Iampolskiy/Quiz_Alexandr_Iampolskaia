@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 export default function SelectCategiries() {
 	const [fetchedCategories, setFetchedCategories] = useState([]);
 	const [selectedCategorie, setSelectedCategorie] = useState([]);
@@ -7,7 +8,9 @@ export default function SelectCategiries() {
 	const [difficulty, setDifficulty] = useState(null);
 	const [disabledButton, setDisabledButton] = useState(false);
 	const [selectedOptionText, setSelectedOptionText] = useState('');
-	const [open, setOpen] = useState(false);
+
+	const [difficultButtonLevel, setdifficultButtonLevel] = useState(0);
+	const [difficultUrlstate, setDifficultUrlstate] = useState('');
 
 	/* fetch Categories */
 	async function fetchQuizCategories() {
@@ -27,48 +30,31 @@ export default function SelectCategiries() {
 		fetchQuizCategories();
 	}, []);
 
-	/*  fetch Questions with selected Categorie */
-
 	async function fetchQuizQuestions() {
 		console.log(selectedCategorie);
-		if (selectedCategorie.length === 0) {
-			try {
-				const response = await fetch(
-					difficulty
-						? `https://opentdb.com/api.php?amount=10&difficulty=${difficulty}`
-						: 'https://opentdb.com/api.php?amount=10'
-				);
-				if (response) {
-					console.log('questions fetch OK');
-				}
-				const jsonData = await response.json();
-				console.log(jsonData);
-				const questions = jsonData.results;
-				setQuestions(questions);
+		const mainUrl = 'https://opentdb.com/api.php?amount=10&type=multiple';
+		const categoryUrl =
+			selectedCategorie.length !== 0 ? `&category=${selectedCategorie.id}` : '';
+		const difficultUrl = difficulty !== null ? `&difficulty=${difficulty}` : '';
+		/* const difficultUrl = difficultUrlstate; */
+		const urlString = `${mainUrl}${categoryUrl}${difficultUrl}`;
+		console.log(urlString);
 
-				console.log(questions);
-			} catch (error) {
-				console.log(error);
+		try {
+			const response = await fetch(urlString);
+			if (response) {
+				console.log('questions fetch OK');
 			}
-		} else {
-			console.log(selectedCategorie);
-			try {
-				const response = await fetch(
-					`https://opentdb.com/api.php?amount=10&category=${selectedCategorie.id}`
-				);
-				if (response) {
-					console.log('questions fetch OK');
-				}
-				const jsonData = await response.json();
-				console.log(jsonData);
-				const questions = jsonData.results;
-				setQuestions(questions);
+			const jsonData = await response.json();
+			console.log(jsonData);
+			const questions = jsonData.results;
+			setQuestions(questions);
 
-				console.log(questions);
-			} catch (error) {
-				console.log(error);
-			}
+			console.log(questions);
+		} catch (error) {
+			console.log(error);
 		}
+
 		setDisabledButton(true);
 		setTimeout(() => {
 			setDisabledButton(false);
@@ -94,12 +80,11 @@ export default function SelectCategiries() {
 		}
 	};
 
-	const handleClose = () => {
-		setOpen(false);
-	};
-
-	const handleOpen = () => {
-		setOpen(true);
+	const handleDifficultButtonLevel = () => {
+		setdifficultButtonLevel(parseInt(difficultButtonLevel + 1));
+		if (difficultButtonLevel >= 3) {
+			setdifficultButtonLevel(0);
+		}
 	};
 
 	return (
@@ -123,10 +108,10 @@ export default function SelectCategiries() {
 							</button>
 						);
 					})}
+					<button onClick={() => setSelectedCategorie('')}>Random</button>
 				</div>
 			)}
 			<div>
-				{/* <button onClick={}>Select Difficulty</button> */}
 				<label htmlFor="difficulty_select">Dificulty </label>
 				<select
 					name="difficulty_select"
