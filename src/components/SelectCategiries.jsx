@@ -9,9 +9,6 @@ export default function SelectCategiries() {
 	const [disabledButton, setDisabledButton] = useState(false);
 	const [selectedOptionText, setSelectedOptionText] = useState('');
 
-	const [difficultButtonLevel, setdifficultButtonLevel] = useState(0);
-	const [difficultUrlstate, setDifficultUrlstate] = useState('');
-
 	/* fetch Categories */
 	async function fetchQuizCategories() {
 		try {
@@ -77,13 +74,6 @@ export default function SelectCategiries() {
 			setDifficulty(null);
 		} else {
 			setDifficulty(e.target.value);
-		}
-	};
-
-	const handleDifficultButtonLevel = () => {
-		setdifficultButtonLevel(parseInt(difficultButtonLevel + 1));
-		if (difficultButtonLevel >= 3) {
-			setdifficultButtonLevel(0);
 		}
 	};
 
