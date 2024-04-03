@@ -1,3 +1,11 @@
+import SelectCategiries from './SelectCategiries';
+
 export default function quiz() {
-	return <div>Quiz</div>;
+	return (
+		<>
+			<div className="marginTop">
+				<SelectCategiries />
+			</div>
+		</>
+	);
 }

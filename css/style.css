@@ -6,3 +6,13 @@
 @import 'navigation';
 @import 'typographie';
 @import 'components';
+
+.header-title {
+	color: white;
+	display: flex;
+	justify-content: center;
+}
+
+.marginTop {
+	margin-top: 32px;
+}
