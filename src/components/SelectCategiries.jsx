@@ -5,9 +5,12 @@ export default function SelectCategiries() {
 	const [selectedCategorie, setSelectedCategorie] = useState([]);
 	const [showCategories, setShowCategories] = useState(true);
 	const [questions, setQuestions] = useState([]);
-	const [difficulty, setDifficulty] = useState(null);
+	const [difficulty, setDifficulty] = useState('random');
 	const [disabledButton, setDisabledButton] = useState(false);
-	const [selectedOptionText, setSelectedOptionText] = useState('');
+	/* const [selectedOptionText, setSelectedOptionText] = useState(''); */
+
+	const [difficultyLevel, setDifficultyLevel] = useState(1);
+	const [difficultyUrlState, setDifficultyUrlState] = useState('');
 
 	/* fetch Categories */
 	async function fetchQuizCategories() {
@@ -32,7 +35,8 @@ export default function SelectCategiries() {
 		const mainUrl = 'https://opentdb.com/api.php?amount=10&type=multiple';
 		const categoryUrl =
 			selectedCategorie.length !== 0 ? `&category=${selectedCategorie.id}` : '';
-		const difficultUrl = difficulty !== null ? `&difficulty=${difficulty}` : '';
+		const difficultUrl =
+			difficulty !== 'random' ? `&difficulty=${difficulty}` : '';
 		/* const difficultUrl = difficultUrlstate; */
 		const urlString = `${mainUrl}${categoryUrl}${difficultUrl}`;
 		console.log(urlString);
@@ -63,9 +67,10 @@ export default function SelectCategiries() {
 		console.log(e.target.value);
 		const category = fetchedCategories.find((c) => c.name === selectedCatName);
 		setSelectedCategorie(category);
+		setShowCategories(false);
 	};
 
-	const handleChangeDifficulty = (e) => {
+	/* const handleChangeDifficulty = (e) => {
 		console.log(e.target.value);
 		const selectedOption = e.target.options[e.target.selectedIndex].text;
 		setSelectedOptionText(selectedOption);
@@ -75,10 +80,57 @@ export default function SelectCategiries() {
 		} else {
 			setDifficulty(e.target.value);
 		}
+	}; */
+
+	const handleDifficultyButton = () => {
+		const difficultyLevelArray = ['random', 'easy', 'medium', 'hard'];
+		setDifficultyLevel(difficultyLevel < 3 ? difficultyLevel + 1 : 0);
+
+		console.log(difficultyLevel);
+
+		setDifficulty(difficultyLevelArray[difficultyLevel]);
+
+		/* 	difficultyLevelArray.map((level) => {
+			console.log(difficultyLevel);
+			console.log(difficultyLevelArray[difficultyLevel]);
+			if (difficultyLevelArray[difficultyLevel] === 'random') {
+				setDifficulty(null);
+			} else {
+				setDifficulty(difficultyLevelArray[difficultyLevel]);
+			}
+			setDifficulty(difficultyLevelArray[difficultyLevel]);
+		}); */
+
+		/* const test = difficultyLevelArray[difficultyLevel];
+		console.log(test);
+
+		if (difficultyLevelArray[difficultyLevel] === 'random') {
+			setDifficulty(test);
+		} */
+	};
+
+	/* console.log(difficulty);
+	console.log(difficultyLevel); */
+
+	const toUpperCase = (text) => {
+		if (text) {
+			return text.charAt(0).toUpperCase() + text.slice(1);
+		} else {
+			return 'randomsdfsdf';
+		}
 	};
 
 	return (
 		<>
+			<button
+				onClick={() => {
+					/* setDifficultyLevel(difficultyLevel < 3 ? difficultyLevel + 1 : 0), */
+					handleDifficultyButton();
+				}}
+			>
+				{toUpperCase(difficulty)}
+				{/* {difficulty ? difficulty : 'random'} */}
+			</button>
 			<button onClick={() => setShowCategories(!showCategories)}>
 				{showCategories ? 'Hide Categories' : 'Show Categories'}
 			</button>
@@ -101,7 +153,7 @@ export default function SelectCategiries() {
 					<button onClick={() => setSelectedCategorie('')}>Random</button>
 				</div>
 			)}
-			<div>
+			{/* <div>
 				<label htmlFor="difficulty_select">Dificulty </label>
 				<select
 					name="difficulty_select"
@@ -113,7 +165,7 @@ export default function SelectCategiries() {
 					<option value={'medium'}>Medium</option>
 					<option value={'hard'}>Hard</option>
 				</select>
-			</div>
+			</div> */}
 			<button disabled={disabledButton} onClick={fetchQuizQuestions}>
 				fetchQuestions
 			</button>
@@ -127,7 +179,7 @@ export default function SelectCategiries() {
 
 			<div>
 				{difficulty
-					? 'Difficulty' + ' ' + selectedOptionText
+					? 'Difficulty' + ' ' + toUpperCase(difficulty)
 					: ' Difficulty Random'}
 			</div>
 		</>
