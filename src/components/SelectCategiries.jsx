@@ -1,16 +1,17 @@
+import ShowQuestion from './ShowQuestion';
 import { useEffect, useState } from 'react';
 
 export default function SelectCategiries() {
 	const [fetchedCategories, setFetchedCategories] = useState([]);
 	const [selectedCategorie, setSelectedCategorie] = useState([]);
-	const [showCategories, setShowCategories] = useState(true);
+	const [showCategories, setShowCategories] = useState(false);
 	const [questions, setQuestions] = useState([]);
-	const [difficulty, setDifficulty] = useState('random');
 	const [disabledButton, setDisabledButton] = useState(false);
-	/* const [selectedOptionText, setSelectedOptionText] = useState(''); */
-
+	const [difficulty, setDifficulty] = useState('easy');
 	const [difficultyLevel, setDifficultyLevel] = useState(1);
-	const [difficultyUrlState, setDifficultyUrlState] = useState('');
+	const [quizType, setQuizType] = useState('multiple');
+	const [typeLevel, setTypeLevel] = useState(1);
+	const [nrOfQuestions, setNrOfQuestions] = useState(3);
 
 	/* fetch Categories */
 	async function fetchQuizCategories() {
@@ -32,22 +33,32 @@ export default function SelectCategiries() {
 
 	async function fetchQuizQuestions() {
 		console.log(selectedCategorie);
-		const mainUrl = 'https://opentdb.com/api.php?amount=10&type=multiple';
+		const mainUrl = 'https://opentdb.com/api.php?';
+
+		const amountUrl = `amount=${nrOfQuestions}`;
 		const categoryUrl =
 			selectedCategorie.length !== 0 ? `&category=${selectedCategorie.id}` : '';
 		const difficultUrl =
-			difficulty !== 'random' ? `&difficulty=${difficulty}` : '';
-		/* const difficultUrl = difficultUrlstate; */
-		const urlString = `${mainUrl}${categoryUrl}${difficultUrl}`;
+			difficulty !== undefined ? `&difficulty=${difficulty}` : '';
+		const quizTypeUrl = quizType !== 'random' ? `&type=${quizType}` : '';
+		const urlString = `${mainUrl}${amountUrl}${categoryUrl}${difficultUrl}${quizTypeUrl}`;
 		console.log(urlString);
 
 		try {
 			const response = await fetch(urlString);
 			if (response) {
 				console.log('questions fetch OK');
+				/* console.log('questions fetch OK'); */
 			}
 			const jsonData = await response.json();
 			console.log(jsonData);
+			console.log(jsonData.response_code);
+			if (jsonData.response_code === 1) {
+				console.log(jsonData.response_code);
+				alert(
+					'Not enough questions available. Pls lower the amount of questions or select a different category.'
+				);
+			}
 			const questions = jsonData.results;
 			setQuestions(questions);
 
@@ -60,7 +71,27 @@ export default function SelectCategiries() {
 		setTimeout(() => {
 			setDisabledButton(false);
 		}, 5000);
+
+		/*!!!!fetchNumberOfQuestions muss immer neu abgefragt werden wenn categorie wechselt
+		die geht net https://opentdb.com/api.php?amount=10&category=16&difficulty=medium&type=boolean
+		
+		
+		*/
+	} /*  */
+
+	/* async function fetchNumberOfQuestions() {
+		const urlString = `https://opentdb.com/api_count.php?category=16`;
+		const response = await fetch(urlString);
+		if (response) {
+			console.log('Number fetch OK');
+			console.log(response);
+		}
+		const jsonData = await response.json();
+		console.log(jsonData);
 	}
+	useEffect(() => {
+		fetchNumberOfQuestions();
+	}, []); */
 
 	const handleCategoriesChange = (e) => {
 		const selectedCatName = e.target.value;
@@ -70,67 +101,41 @@ export default function SelectCategiries() {
 		setShowCategories(false);
 	};
 
-	/* const handleChangeDifficulty = (e) => {
-		console.log(e.target.value);
-		const selectedOption = e.target.options[e.target.selectedIndex].text;
-		setSelectedOptionText(selectedOption);
-
-		if (e.target.value === 'random') {
-			setDifficulty(null);
-		} else {
-			setDifficulty(e.target.value);
-		}
-	}; */
-
 	const handleDifficultyButton = () => {
 		const difficultyLevelArray = ['random', 'easy', 'medium', 'hard'];
 		setDifficultyLevel(difficultyLevel < 3 ? difficultyLevel + 1 : 0);
-
-		console.log(difficultyLevel);
-
-		setDifficulty(difficultyLevelArray[difficultyLevel]);
-
-		/* 	difficultyLevelArray.map((level) => {
-			console.log(difficultyLevel);
-			console.log(difficultyLevelArray[difficultyLevel]);
-			if (difficultyLevelArray[difficultyLevel] === 'random') {
-				setDifficulty(null);
-			} else {
-				setDifficulty(difficultyLevelArray[difficultyLevel]);
-			}
-			setDifficulty(difficultyLevelArray[difficultyLevel]);
-		}); */
-
-		/* const test = difficultyLevelArray[difficultyLevel];
-		console.log(test);
-
-		if (difficultyLevelArray[difficultyLevel] === 'random') {
-			setDifficulty(test);
-		} */
+		setDifficulty(difficultyLevelArray[difficultyLevel + 1]);
 	};
-
-	/* console.log(difficulty);
-	console.log(difficultyLevel); */
-
 	const toUpperCase = (text) => {
 		if (text) {
 			return text.charAt(0).toUpperCase() + text.slice(1);
 		} else {
-			return 'randomsdfsdf';
+			return 'Random';
 		}
+	};
+
+	const handleTypeButton = () => {
+		const quizTypeArray = ['multiple', 'boolean', 'random'];
+		setTypeLevel(typeLevel < 2 ? typeLevel + 1 : 0);
+		setQuizType(quizTypeArray[typeLevel]);
 	};
 
 	return (
 		<>
+			<button onClick={() => setNrOfQuestions(nrOfQuestions - 1)}>-</button>
+			<button>Number of questions {nrOfQuestions}</button>
+			<button onClick={() => setNrOfQuestions(nrOfQuestions + 1)}>+</button>
+			<button onClick={() => handleTypeButton()}>
+				{toUpperCase(quizType)}
+			</button>
 			<button
 				onClick={() => {
-					/* setDifficultyLevel(difficultyLevel < 3 ? difficultyLevel + 1 : 0), */
 					handleDifficultyButton();
 				}}
 			>
 				{toUpperCase(difficulty)}
-				{/* {difficulty ? difficulty : 'random'} */}
 			</button>
+
 			<button onClick={() => setShowCategories(!showCategories)}>
 				{showCategories ? 'Hide Categories' : 'Show Categories'}
 			</button>
@@ -150,30 +155,23 @@ export default function SelectCategiries() {
 							</button>
 						);
 					})}
-					<button onClick={() => setSelectedCategorie('')}>Random</button>
+					<button
+						onClick={() => {
+							setSelectedCategorie(''), setShowCategories(false);
+						}}
+					>
+						Random
+					</button>
 				</div>
 			)}
-			{/* <div>
-				<label htmlFor="difficulty_select">Dificulty </label>
-				<select
-					name="difficulty_select"
-					id="difficulty_select"
-					onChange={handleChangeDifficulty}
-				>
-					<option value={'random'}>Random</option>
-					<option value={'easy'}>Easy</option>
-					<option value={'medium'}>Medium</option>
-					<option value={'hard'}>Hard</option>
-				</select>
-			</div> */}
 			<button disabled={disabledButton} onClick={fetchQuizQuestions}>
-				fetchQuestions
+				Start Quiz
 			</button>
 			<div>
 				{selectedCategorie.name ? (
-					<p>Category {selectedCategorie.name}</p>
+					<div>Category {selectedCategorie.name}</div>
 				) : (
-					<p>Category Random</p>
+					<div>Category Random</div>
 				)}
 			</div>
 
@@ -182,6 +180,14 @@ export default function SelectCategiries() {
 					? 'Difficulty' + ' ' + toUpperCase(difficulty)
 					: ' Difficulty Random'}
 			</div>
+			<div>
+				{quizType ? 'Quiz Type' + ' ' + toUpperCase(quizType) : 'Type Random'}
+			</div>
+			<ShowQuestion
+				questions={questions}
+				selectedCategorieID={selectedCategorie.id}
+				nrOfQuestions={nrOfQuestions}
+			/>
 		</>
 	);
 }
