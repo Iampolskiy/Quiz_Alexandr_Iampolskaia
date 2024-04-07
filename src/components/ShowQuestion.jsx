@@ -9,6 +9,11 @@ export default function ShowQuestion({ questions, nrOfQuestions }) {
 	const [buttonsDisabled, setButtonsDisabled] = useState(false);
 	const [incorrectAnswers, setIncorrectAnswers] = useState(0);
 
+	function decodeHtmlEntities(text) {
+		const textArea = document.createElement('textarea');
+		textArea.innerHTML = text;
+		return textArea.value;
+	}
 	useEffect(() => {
 		if (questions.length > 0 && correctAnswersInRow < nrOfQuestions) {
 			const incorrectAnswers = questions[correctAnswersInRow].incorrect_answers;
@@ -20,7 +25,7 @@ export default function ShowQuestion({ questions, nrOfQuestions }) {
 			);
 			setCorrectAnswer(correctAnswer);
 			setAnswersArray(newAnswersArray);
-			setQuestion(question);
+			setQuestion(decodeHtmlEntities(question));
 			console.log(newAnswersArray);
 		} else {
 			console.log('All questions answered');
@@ -55,18 +60,21 @@ export default function ShowQuestion({ questions, nrOfQuestions }) {
 				/>
 			) : (
 				<div>
-					<p>right answers {correctAnswersInRow}</p>
-					<p>false answers {incorrectAnswers}</p>
-					<h2>{question}</h2>
-					{answersArray.map((answer) => (
-						<button
-							disabled={correctAnswersInRow === nrOfQuestions}
-							onClick={checkAnswer}
-							key={answer}
-						>
-							{answer}
-						</button>
-					))}
+					<div>right answers {correctAnswersInRow}</div>
+					<div>false answers {incorrectAnswers}</div>
+					<div className="question">{question}</div>
+					<div className="answer_wrapper">
+						{answersArray.map((answer) => (
+							<button
+								className="answers"
+								disabled={correctAnswersInRow === nrOfQuestions}
+								onClick={checkAnswer}
+								key={answer}
+							>
+								<div>{answer}</div>
+							</button>
+						))}
+					</div>
 					{console.log(correctAnswersInRow)}
 				</div>
 			)}

@@ -36,6 +36,7 @@ export default function SelectCategiries() {
 		const mainUrl = 'https://opentdb.com/api.php?';
 
 		const amountUrl = `amount=${nrOfQuestions}`;
+		const codeUrl = `&encode=url3986`;
 		const categoryUrl =
 			selectedCategorie.length !== 0 ? `&category=${selectedCategorie.id}` : '';
 		const difficultUrl =
@@ -60,6 +61,7 @@ export default function SelectCategiries() {
 				);
 			}
 			const questions = jsonData.results;
+			console.log(questions);
 			setQuestions(questions);
 
 			console.log(questions);
@@ -71,27 +73,7 @@ export default function SelectCategiries() {
 		setTimeout(() => {
 			setDisabledButton(false);
 		}, 5000);
-
-		/*!!!!fetchNumberOfQuestions muss immer neu abgefragt werden wenn categorie wechselt
-		die geht net https://opentdb.com/api.php?amount=10&category=16&difficulty=medium&type=boolean
-		
-		
-		*/
-	} /*  */
-
-	/* async function fetchNumberOfQuestions() {
-		const urlString = `https://opentdb.com/api_count.php?category=16`;
-		const response = await fetch(urlString);
-		if (response) {
-			console.log('Number fetch OK');
-			console.log(response);
-		}
-		const jsonData = await response.json();
-		console.log(jsonData);
 	}
-	useEffect(() => {
-		fetchNumberOfQuestions();
-	}, []); */
 
 	const handleCategoriesChange = (e) => {
 		const selectedCatName = e.target.value;
@@ -122,23 +104,40 @@ export default function SelectCategiries() {
 
 	return (
 		<>
-			<button onClick={() => setNrOfQuestions(nrOfQuestions - 1)}>-</button>
-			<button>Number of questions {nrOfQuestions}</button>
-			<button onClick={() => setNrOfQuestions(nrOfQuestions + 1)}>+</button>
-			<button onClick={() => handleTypeButton()}>
-				{toUpperCase(quizType)}
-			</button>
-			<button
-				onClick={() => {
-					handleDifficultyButton();
-				}}
-			>
-				{toUpperCase(difficulty)}
-			</button>
+			<div className="menuButton_start">
+				<button
+					className="buttonStyle"
+					disabled={disabledButton}
+					onClick={fetchQuizQuestions}
+				>
+					Start Quiz
+				</button>
+			</div>
+			<div className="menuButton_number">
+				<button onClick={() => setNrOfQuestions(nrOfQuestions - 1)}>-</button>
+				<div className="buttonStyle">Number of questions {nrOfQuestions}</div>
+				<button onClick={() => setNrOfQuestions(nrOfQuestions + 1)}>+</button>
+			</div>
 
-			<button onClick={() => setShowCategories(!showCategories)}>
-				{showCategories ? 'Hide Categories' : 'Show Categories'}
-			</button>
+			<div className="menuButton_type">
+				<button onClick={() => handleTypeButton()}>
+					{toUpperCase(quizType)}
+				</button>
+			</div>
+			<div className="menuButton_level">
+				<button
+					onClick={() => {
+						handleDifficultyButton();
+					}}
+				>
+					{toUpperCase(difficulty)}
+				</button>
+			</div>
+			<div className="menuButton_showCat">
+				<button onClick={() => setShowCategories(!showCategories)}>
+					{showCategories ? 'Hide Categories' : 'Show Categories'}
+				</button>
+			</div>
 			{showCategories && (
 				<div className="showCategories">
 					{fetchedCategories.map(({ name, id }) => {
@@ -164,9 +163,7 @@ export default function SelectCategiries() {
 					</button>
 				</div>
 			)}
-			<button disabled={disabledButton} onClick={fetchQuizQuestions}>
-				Start Quiz
-			</button>
+
 			<div>
 				{selectedCategorie.name ? (
 					<div>Category {selectedCategorie.name}</div>

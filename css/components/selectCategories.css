@@ -1,3 +1,105 @@
-.capitalize {
-	text-transform: capitalize;
+.menuButton_number {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 2rem;
+	gap: 0.4rem;
+	button {
+		background-color: var(--indigo-7);
+		border-color: var(--indigo-3);
+		&:hover {
+			background-color: white;
+		}
+	}
+}
+
+.menuButton_start {
+	display: flex;
+	justify-content: center;
+	button {
+		width: 100vw;
+		background-color: var(--indigo-3);
+		border-color: var(--indigo-3);
+		&:hover {
+			background-color: white;
+			text-transform: uppercase;
+		}
+	}
+}
+
+.menuButton_type {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0.5rem;
+	button {
+		width: 25vw;
+		background-color: var(--indigo-7);
+		border-color: var(--indigo-3);
+		&:hover {
+			background-color: white;
+		}
+	}
+}
+
+.menuButton_level {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0.5rem;
+	button {
+		width: 25vw;
+		background-color: var(--indigo-7);
+		border-color: var(--indigo-3);
+		&:hover {
+			background-color: white;
+		}
+	}
+}
+
+.menuButton_showCat {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0.5rem;
+	button {
+		width: 25vw;
+		background-color: var(--indigo-7);
+		border-color: var(--indigo-3);
+		&:hover {
+			background-color: white;
+		}
+	}
+}
+
+.buttonStyle {
+	width: 25vw;
+	height: 45px;
+	color: var(--button-color);
+	border: 1px solid;
+	border-color: var(--indigo-3);
+	border-radius: var(--border-radius-s);
+	background-color: var(--indigo-7);
+	padding: 0.6em 1em 0.4em;
+	font-weight: bold;
+	box-shadow: var(--shadow-4);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&:hover {
+		background-color: white;
+		color: var(--button-background-color);
+	}
+}
+
+.showCategories {
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.categorieButton {
+	width: 30%;
+	margin: 5px;
 }
