@@ -35,12 +35,20 @@ export default function ShowQuestion({ questions, nrOfQuestions }) {
 	function checkAnswer(e) {
 		const buttonText = e.target.textContent;
 		if (correctAnswer === buttonText) {
-			setCorrectAnswersInRow(correctAnswersInRow + 1);
+			/* setCorrectAnswersInRow(correctAnswersInRow + 1); */
+			setTimeout(() => {
+				setCorrectAnswersInRow(correctAnswersInRow + 1);
+			}, 2000);
 			console.log('Right Answer!');
 			console.log(correctAnswersInRow);
+			e.currentTarget.style.backgroundColor = 'green';
 		} else {
 			console.log('Wrong Answer!');
-			setIncorrectAnswers(incorrectAnswers + 1);
+			setTimeout(() => {
+				setIncorrectAnswers(incorrectAnswers + 1);
+			}, 2000);
+			e.currentTarget.style.backgroundColor = 'red';
+			e.currentTarget.disabled = true;
 		}
 		console.log(buttonText);
 		const rightAnswers = correctAnswersInRow + 1;

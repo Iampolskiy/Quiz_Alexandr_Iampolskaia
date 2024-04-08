@@ -18,3 +18,22 @@
 	margin: 1rem 1rem;
 	width: 30vw;
 }
+
+.correct {
+	background-color: green;
+	animation: blink-animation 1s ease;
+}
+
+.incorrect {
+	background-color: red;
+	animation: blink-animation 1s ease;
+}
+
+@keyframes blink-animation {
+	50% {
+		opacity: 0.5;
+	}
+	100% {
+		opacity: 1;
+	}
+}
