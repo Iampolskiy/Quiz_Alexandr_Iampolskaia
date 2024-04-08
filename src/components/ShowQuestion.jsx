@@ -35,7 +35,7 @@ export default function ShowQuestion({
 			const incorrectAnswers = questions[correctAnswersInRow].incorrect_answers;
 			const question = questions[correctAnswersInRow].question;
 			const correctAnswer =
-				questions[correctAnswersInRow].correct_answer + '!!!!';
+				questions[correctAnswersInRow].correct_answer; /* + '!!!!' */
 			const newAnswersArray = [...incorrectAnswers, correctAnswer].sort(
 				() => Math.random() - 0.5
 			);
