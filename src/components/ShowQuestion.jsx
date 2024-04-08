@@ -1,19 +1,35 @@
 import { useEffect, useState } from 'react';
 import YouWin from './YouWin';
+import '@animxyz/core';
+import { XyzTransition } from '@animxyz/react';
+import { xyz } from '@animxyz/react';
+import { toUpperCase } from '../helpers/helpers';
 
-export default function ShowQuestion({ questions, nrOfQuestions }) {
+export default function ShowQuestion({
+	questions,
+	nrOfQuestions,
+	endQuiz,
+	quizType,
+	difficulty,
+	selectedCategorie,
+}) {
 	const [correctAnswersInRow, setCorrectAnswersInRow] = useState(0);
 	const [answersArray, setAnswersArray] = useState([]);
 	const [question, setQuestion] = useState('');
 	const [correctAnswer, setCorrectAnswer] = useState('');
 	const [buttonsDisabled, setButtonsDisabled] = useState(false);
 	const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+	const [answerStatus, setAnswerStatus] = useState('');
 
 	function decodeHtmlEntities(text) {
 		const textArea = document.createElement('textarea');
 		textArea.innerHTML = text;
 		return textArea.value;
 	}
+
+	const endQuizHandler = () => {
+		endQuiz();
+	};
 	useEffect(() => {
 		if (questions.length > 0 && correctAnswersInRow < nrOfQuestions) {
 			const incorrectAnswers = questions[correctAnswersInRow].incorrect_answers;
@@ -35,15 +51,18 @@ export default function ShowQuestion({ questions, nrOfQuestions }) {
 	function checkAnswer(e) {
 		const buttonText = e.target.textContent;
 		if (correctAnswer === buttonText) {
-			/* setCorrectAnswersInRow(correctAnswersInRow + 1); */
+			setAnswerStatus('correctAnswer');
+			e.currentTarget.classList.add('correctAnswer');
 			setTimeout(() => {
 				setCorrectAnswersInRow(correctAnswersInRow + 1);
 			}, 2000);
+
 			console.log('Right Answer!');
 			console.log(correctAnswersInRow);
-			e.currentTarget.style.backgroundColor = 'green';
 		} else {
 			console.log('Wrong Answer!');
+			e.currentTarget.classList.add('incorrectAnswer');
+			setAnswerStatus('incorrectAnswer');
 			setTimeout(() => {
 				setIncorrectAnswers(incorrectAnswers + 1);
 			}, 2000);
@@ -59,27 +78,60 @@ export default function ShowQuestion({ questions, nrOfQuestions }) {
 		}
 	}
 
+	const fadeArrayAnswers = [
+		'fade up left delay-1',
+		'fade up up delay-2',
+		'fade up up delay-3',
+		'fade down right delay-4',
+	];
+
 	return (
 		<>
 			{correctAnswersInRow === nrOfQuestions ? (
 				<YouWin
 					correctAnswersInRow={correctAnswersInRow}
 					incorrectAnswers={incorrectAnswers}
+					selectedCategorie={selectedCategorie}
+					difficulty={difficulty}
+					quizType={quizType}
 				/>
 			) : (
 				<div>
-					<div>right answers {correctAnswersInRow}</div>
-					<div>false answers {incorrectAnswers}</div>
-					<div className="question">{question}</div>
+					<div className="info-container">
+						<div>
+							{selectedCategorie.name
+								? 'Category:' + selectedCategorie.name
+								: 'Category: Random'}
+						</div>
+						<div>
+							{difficulty
+								? 'Difficulty:' + ' ' + toUpperCase(difficulty)
+								: ' Difficulty: Random'}
+						</div>
+						<div>
+							{quizType
+								? 'Quiz Type:' + ' ' + toUpperCase(quizType)
+								: 'Type: Random'}
+						</div>
+					</div>
+					<div className="info-container2">
+						<div className="emojiHand"> 👍 {correctAnswersInRow}</div>
+						<div className="emojiHand"> 👎 {incorrectAnswers}</div>
+						<div>SCORE {correctAnswersInRow - incorrectAnswers}</div>
+					</div>
+					<div className="question xyz-in" xyz="fade up delay-2">
+						{question}
+					</div>
 					<div className="answer_wrapper">
-						{answersArray.map((answer) => (
+						{answersArray.map((answer, index) => (
 							<button
-								className="answers"
+								className=" answers xyz-in"
+								xyz={fadeArrayAnswers[index]} //fade up left delay-1
 								disabled={correctAnswersInRow === nrOfQuestions}
 								onClick={checkAnswer}
 								key={answer}
 							>
-								<div>{answer}</div>
+								<div>{decodeHtmlEntities(answer)}</div>
 							</button>
 						))}
 					</div>

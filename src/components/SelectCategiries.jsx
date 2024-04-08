@@ -1,5 +1,6 @@
 import ShowQuestion from './ShowQuestion';
 import { useEffect, useState } from 'react';
+import { toUpperCase } from '../helpers/helpers';
 
 export default function SelectCategiries() {
 	const [fetchedCategories, setFetchedCategories] = useState([]);
@@ -12,6 +13,8 @@ export default function SelectCategiries() {
 	const [quizType, setQuizType] = useState('multiple');
 	const [typeLevel, setTypeLevel] = useState(1);
 	const [nrOfQuestions, setNrOfQuestions] = useState(3);
+	const [categoryButtonText, setCategoryButtonText] = useState('Random');
+	const [visible, setVisible] = useState(true);
 
 	/* fetch Categories */
 	async function fetchQuizCategories() {
@@ -59,6 +62,7 @@ export default function SelectCategiries() {
 				alert(
 					'Not enough questions available. Pls lower the amount of questions or select a different category.'
 				);
+				setVisible(true);
 			}
 			const questions = jsonData.results;
 			console.log(questions);
@@ -88,13 +92,6 @@ export default function SelectCategiries() {
 		setDifficultyLevel(difficultyLevel < 3 ? difficultyLevel + 1 : 0);
 		setDifficulty(difficultyLevelArray[difficultyLevel + 1]);
 	};
-	const toUpperCase = (text) => {
-		if (text) {
-			return text.charAt(0).toUpperCase() + text.slice(1);
-		} else {
-			return 'Random';
-		}
-	};
 
 	const handleTypeButton = () => {
 		const quizTypeArray = ['multiple', 'boolean', 'random'];
@@ -102,88 +99,102 @@ export default function SelectCategiries() {
 		setQuizType(quizTypeArray[typeLevel]);
 	};
 
+	() => setCategoryButtonText(selectedCategorie);
+
+	console.log(categoryButtonText);
+
 	return (
 		<>
-			<div className="menuButton_start">
-				<button
-					className="buttonStyle"
-					disabled={disabledButton}
-					onClick={fetchQuizQuestions}
-				>
-					Start Quiz
-				</button>
-			</div>
-			<div className="menuButton_number">
-				<button onClick={() => setNrOfQuestions(nrOfQuestions - 1)}>-</button>
-				<div className="buttonStyle">Number of questions {nrOfQuestions}</div>
-				<button onClick={() => setNrOfQuestions(nrOfQuestions + 1)}>+</button>
-			</div>
+			<div className={visible ? 'all' : 'none'}>
+				<div className="menuButton_number">
+					<button onClick={() => setNrOfQuestions(nrOfQuestions - 1)}>-</button>
+					<div className="buttonStyle">Questions {nrOfQuestions}</div>
+					<button onClick={() => setNrOfQuestions(nrOfQuestions + 1)}>+</button>
+				</div>
 
-			<div className="menuButton_type">
-				<button onClick={() => handleTypeButton()}>
-					{toUpperCase(quizType)}
-				</button>
-			</div>
-			<div className="menuButton_level">
-				<button
-					onClick={() => {
-						handleDifficultyButton();
-					}}
-				>
-					{toUpperCase(difficulty)}
-				</button>
-			</div>
-			<div className="menuButton_showCat">
-				<button onClick={() => setShowCategories(!showCategories)}>
-					{showCategories ? 'Hide Categories' : 'Show Categories'}
-				</button>
-			</div>
-			{showCategories && (
-				<div className="showCategories">
-					{fetchedCategories.map(({ name, id }) => {
-						return (
-							<button
-								className="categorieButton"
-								key={id}
-								onClick={(e) => {
-									handleCategoriesChange(e);
-								}}
-								value={name}
-							>
-								{name}
-							</button>
-						);
-					})}
-					<button
-						onClick={() => {
-							setSelectedCategorie(''), setShowCategories(false);
-						}}
-					>
-						Random
+				<div className="menuButton_type">
+					<button onClick={() => handleTypeButton()}>
+						{toUpperCase(quizType)}
 					</button>
 				</div>
-			)}
-
-			<div>
-				{selectedCategorie.name ? (
-					<div>Category {selectedCategorie.name}</div>
-				) : (
-					<div>Category Random</div>
+				<div className="menuButton_level">
+					<button
+						onClick={() => {
+							handleDifficultyButton();
+						}}
+					>
+						{toUpperCase(difficulty)}
+					</button>
+				</div>
+				<div className="menuButton_showCat">
+					<button onClick={() => setShowCategories(!showCategories)}>
+						{/* {showCategories ? selectedCategorie.name : 'Change Categorie'} */}
+						{/* {showCategoriesNames} */}
+						{selectedCategorie.name ? selectedCategorie.name : 'Random'}
+					</button>
+				</div>
+				<div className="menuButton_start">
+					<button
+						className="buttonStyle"
+						disabled={disabledButton}
+						onClick={() => {
+							fetchQuizQuestions();
+							setVisible(false);
+						}}
+					>
+						Start Quiz
+					</button>
+				</div>
+				{showCategories && (
+					<div className="showCategories">
+						{fetchedCategories.map(({ name, id }) => {
+							return (
+								<button
+									className="categorieButton"
+									key={id}
+									onClick={(e) => {
+										handleCategoriesChange(e);
+									}}
+									value={name}
+								>
+									{name}
+								</button>
+							);
+						})}
+						<button
+							onClick={() => {
+								setSelectedCategorie(''), setShowCategories(false);
+							}}
+						>
+							Random
+						</button>
+					</div>
 				)}
-			</div>
-
-			<div>
-				{difficulty
-					? 'Difficulty' + ' ' + toUpperCase(difficulty)
-					: ' Difficulty Random'}
-			</div>
-			<div>
-				{quizType ? 'Quiz Type' + ' ' + toUpperCase(quizType) : 'Type Random'}
+				<div className="info-container">
+					<div>
+						{selectedCategorie.name
+							? 'Category:' + selectedCategorie.name
+							: 'Category: Random'}
+					</div>
+					<div>
+						{difficulty
+							? 'Difficulty:' + ' ' + toUpperCase(difficulty)
+							: ' Difficulty: Random'}
+					</div>
+					<div>
+						{quizType
+							? 'Quiz Type:' + ' ' + toUpperCase(quizType)
+							: 'Type: Random'}
+					</div>
+				</div>
 			</div>
 			<ShowQuestion
 				questions={questions}
-				selectedCategorieID={selectedCategorie.id}
+				/* selectedCategorieID={selectedCategorie.id} */
 				nrOfQuestions={nrOfQuestions}
+				selectedCategorie={selectedCategorie}
+				difficulty={difficulty}
+				quizType={quizType}
 			/>
 		</>
 	);
