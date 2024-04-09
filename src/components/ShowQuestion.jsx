@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
-import YouWin from './YouWin';
 import '@animxyz/core';
-import { XyzTransition } from '@animxyz/react';
-import { xyz } from '@animxyz/react';
-import { toUpperCase } from '../helpers/helpers';
+import YouWin from './YouWin';
+import { useEffect, useState } from 'react';
+import { toUpperCase, decodeHtmlEntities } from '../helpers/helpers';
 
 export default function ShowQuestion({
 	questions,
@@ -21,24 +19,21 @@ export default function ShowQuestion({
 	const [incorrectAnswers, setIncorrectAnswers] = useState(0);
 	const [answerStatus, setAnswerStatus] = useState('');
 
-	function decodeHtmlEntities(text) {
-		const textArea = document.createElement('textarea');
-		textArea.innerHTML = text;
-		return textArea.value;
-	}
-
 	useEffect(() => {
 		if (questions.length > 0 && correctAnswersInRow < nrOfQuestions) {
 			const incorrectAnswers = questions[correctAnswersInRow].incorrect_answers;
-			const question = questions[correctAnswersInRow].question;
-			const correctAnswer =
-				questions[correctAnswersInRow].correct_answer + '!!!!';
+			const question = decodeHtmlEntities(
+				questions[correctAnswersInRow].question
+			);
+			const correctAnswer = decodeHtmlEntities(
+				questions[correctAnswersInRow].correct_answer + '!!!!'
+			);
 			const newAnswersArray = [...incorrectAnswers, correctAnswer].sort(
 				() => Math.random() - 0.5
 			);
 			setCorrectAnswer(correctAnswer);
 			setAnswersArray(newAnswersArray);
-			setQuestion(decodeHtmlEntities(question));
+			setQuestion(question);
 			console.log(newAnswersArray);
 		} else {
 			console.log('All questions answered');
@@ -86,6 +81,10 @@ export default function ShowQuestion({
 		'fade down right delay-4',
 	];
 
+	console.log(questions.length);
+	console.log(correctAnswersInRow);
+	console.log(questions.length - correctAnswersInRow);
+
 	return (
 		<>
 			{correctAnswersInRow === nrOfQuestions ? (
@@ -118,7 +117,8 @@ export default function ShowQuestion({
 					<div className="info-container2">
 						<div className="emojiHand"> 👍 {correctAnswersInRow}</div>
 						<div className="emojiHand"> 👎 {incorrectAnswers}</div>
-						<div>SCORE {correctAnswersInRow - incorrectAnswers}</div>
+						<div>score {correctAnswersInRow - incorrectAnswers}</div>
+						<div>questions {questions.length - correctAnswersInRow}</div>
 					</div>
 					<div className="question xyz-in" xyz="fade up delay-2">
 						{question}

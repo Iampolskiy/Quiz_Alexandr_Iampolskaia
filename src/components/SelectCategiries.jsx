@@ -86,11 +86,16 @@ export default function SelectCategiries() {
 		setSelectedCategorie(category);
 		setShowCategories(false);
 	};
+	/* const colorArray = ['random', 'easy', 'medium', 'hard']; */
 
-	const handleDifficultyButton = () => {
+	const handleDifficultyButton = (/* e */) => {
 		const difficultyLevelArray = ['random', 'easy', 'medium', 'hard'];
 		setDifficultyLevel(difficultyLevel < 3 ? difficultyLevel + 1 : 0);
 		setDifficulty(difficultyLevelArray[difficultyLevel + 1]);
+		/* colorArray.forEach((color) => {
+			e.target.classList.remove(color);
+		});
+		e.target.classList.add(colorArray[difficultyLevel]); */
 	};
 
 	const handleTypeButton = () => {
@@ -107,20 +112,25 @@ export default function SelectCategiries() {
 		<>
 			<div className={visible ? 'all' : 'none'}>
 				<div className="menuButton_number">
-					<button onClick={() => setNrOfQuestions(nrOfQuestions - 1)}>-</button>
+					<button
+						disabled={nrOfQuestions <= 1}
+						onClick={() => setNrOfQuestions(nrOfQuestions - 1)}
+					>
+						-
+					</button>
 					<div className="buttonStyle">Questions {nrOfQuestions}</div>
 					<button onClick={() => setNrOfQuestions(nrOfQuestions + 1)}>+</button>
 				</div>
 
 				<div className="menuButton_type">
 					<button onClick={() => handleTypeButton()}>
-						{toUpperCase(quizType)}
+						Type {toUpperCase(quizType)}
 					</button>
 				</div>
 				<div className="menuButton_level">
 					<button
-						onClick={() => {
-							handleDifficultyButton();
+						onClick={(e) => {
+							handleDifficultyButton(e);
 						}}
 					>
 						{toUpperCase(difficulty)}
@@ -130,7 +140,9 @@ export default function SelectCategiries() {
 					<button onClick={() => setShowCategories(!showCategories)}>
 						{/* {showCategories ? selectedCategorie.name : 'Change Categorie'} */}
 						{/* {showCategoriesNames} */}
-						{selectedCategorie.name ? selectedCategorie.name : 'Random'}
+						{selectedCategorie.name
+							? selectedCategorie.name
+							: 'Categorie Random'}
 					</button>
 				</div>
 				<div className="menuButton_start">
