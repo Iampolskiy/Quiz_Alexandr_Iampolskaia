@@ -27,16 +27,12 @@ export default function ShowQuestion({
 		return textArea.value;
 	}
 
-	const endQuizHandler = () => {
-		endQuiz();
-	};
 	useEffect(() => {
 		if (questions.length > 0 && correctAnswersInRow < nrOfQuestions) {
 			const incorrectAnswers = questions[correctAnswersInRow].incorrect_answers;
 			const question = questions[correctAnswersInRow].question;
-			const correctAnswer = decodeHtmlEntities(
-				questions[correctAnswersInRow].correct_answer
-			); /* + '!!!!' */
+			const correctAnswer =
+				questions[correctAnswersInRow].correct_answer + '!!!!';
 			const newAnswersArray = [...incorrectAnswers, correctAnswer].sort(
 				() => Math.random() - 0.5
 			);
@@ -51,11 +47,15 @@ export default function ShowQuestion({
 
 	function checkAnswer(e) {
 		const buttonText = e.target.textContent;
+		console.log(buttonText);
 		if (correctAnswer === buttonText) {
-			setAnswerStatus('correctAnswer');
+			/* e.currentTarget.disabled = true; */
+			/* e.currentTarget.style.backgroundColor = 'green'; */
 			e.currentTarget.classList.add('correctAnswer');
+			setAnswerStatus('correctAnswer');
 			setTimeout(() => {
 				setCorrectAnswersInRow(correctAnswersInRow + 1);
+				setAnswersArray([]);
 			}, 2000);
 
 			console.log('Right Answer!');
@@ -63,12 +63,12 @@ export default function ShowQuestion({
 		} else {
 			console.log('Wrong Answer!');
 			e.currentTarget.classList.add('incorrectAnswer');
+			e.currentTarget.disabled = true;
+			e.currentTarget.style.backgroundColor = 'red';
 			setAnswerStatus('incorrectAnswer');
 			setTimeout(() => {
 				setIncorrectAnswers(incorrectAnswers + 1);
 			}, 2000);
-			e.currentTarget.style.backgroundColor = 'red';
-			e.currentTarget.disabled = true;
 		}
 		console.log(buttonText);
 		const rightAnswers = correctAnswersInRow + 1;
@@ -128,7 +128,7 @@ export default function ShowQuestion({
 							<button
 								className=" answers xyz-in"
 								xyz={fadeArrayAnswers[index]} //fade up left delay-1
-								disabled={correctAnswersInRow === nrOfQuestions}
+								/* disabled={correctAnswersInRow === nrOfQuestions} */
 								onClick={checkAnswer}
 								key={answer}
 							>
