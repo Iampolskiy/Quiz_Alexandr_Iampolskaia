@@ -18,6 +18,7 @@ export default function ShowQuestion({
 	const [buttonsDisabled, setButtonsDisabled] = useState(false);
 	const [incorrectAnswers, setIncorrectAnswers] = useState(0);
 	const [answerStatus, setAnswerStatus] = useState('');
+	const [disableWrongAnswers, setDisableWrongAnswers] = useState(false);
 
 	useEffect(() => {
 		if (questions.length > 0 && correctAnswersInRow < nrOfQuestions) {
@@ -48,9 +49,11 @@ export default function ShowQuestion({
 			/* e.currentTarget.style.backgroundColor = 'green'; */
 			e.currentTarget.classList.add('correctAnswer');
 			setAnswerStatus('correctAnswer');
+			setDisableWrongAnswers(true);
 			setTimeout(() => {
 				setCorrectAnswersInRow(correctAnswersInRow + 1);
 				setAnswersArray([]);
+				setDisableWrongAnswers(false);
 			}, 2000);
 
 			console.log('Right Answer!');
@@ -131,6 +134,7 @@ export default function ShowQuestion({
 								/* disabled={correctAnswersInRow === nrOfQuestions} */
 								onClick={checkAnswer}
 								key={answer}
+								disabled={disableWrongAnswers}
 							>
 								<div>{decodeHtmlEntities(answer)}</div>
 							</button>

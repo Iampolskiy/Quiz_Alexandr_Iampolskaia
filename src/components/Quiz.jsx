@@ -9,3 +9,6 @@ export default function quiz() {
 		</>
 	);
 }
+
+/* https://opentdb.com/ */
+/* https://animxyz.com/docs/ */
